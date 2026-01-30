@@ -50,9 +50,17 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
 	// Inside TransactionRepository.java
 
-	@Query("SELECT FUNCTION('DATE_FORMAT', t.date, '%Y-%m'), SUM(t.amount) " + "FROM Transaction t "
-			+ "WHERE t.user.id = :userId AND t.type = :type " + "GROUP BY 1 ORDER BY 1")
-	List<Object[]> getMonthlySummaryByUserIdAndType(Long userId, Type type);
+	@Query("""
+    SELECT FUNCTION('YEAR', t.date),
+           FUNCTION('MONTH', t.date),
+           SUM(t.amount)
+    FROM Transaction t
+    WHERE t.user.id = :userId AND t.type = :type
+    GROUP BY FUNCTION('YEAR', t.date), FUNCTION('MONTH', t.date)
+    ORDER BY FUNCTION('YEAR', t.date), FUNCTION('MONTH', t.date)
+""")
+List<Object[]> getMonthlySummaryByUserIdAndType(Long userId, Type type);
+
 
 	/**
 	 * FIX: Defines the custom aggregation query to calculate Net Balance. Net
@@ -108,29 +116,36 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 	BigDecimal totalExpenses();
 
 	@Query("""
-			    SELECT new com.ExpenseTracker.mod.dto.response.MonthlyTrendResponse(
-			        FUNCTION('DATE_FORMAT', t.date, '%Y-%m'),
-			        COALESCE(SUM(t.amount), 0)
-			    )
-			    FROM Transaction t
-			    WHERE t.user.id = :userId
-			      AND t.type = 'EXPENSE'
-			      AND t.date >= :startDate
-			    GROUP BY FUNCTION('DATE_FORMAT', t.date, '%Y-%m')
-			    ORDER BY FUNCTION('DATE_FORMAT', t.date, '%Y-%m')
-			""")
-	List<MonthlyTrendResponse> findMonthlyExpenseTrends(@Param("userId") Long userId,
-			@Param("startDate") LocalDate startDate);
+    SELECT new MonthlyTrendResponse(
+        FUNCTION('YEAR', t.date),
+        FUNCTION('MONTH', t.date),
+        COALESCE(SUM(t.amount), 0)
+    )
+    FROM Transaction t
+    WHERE t.user.id = :userId
+      AND t.type = 'EXPENSE'
+      AND t.date >= :startDate
+    GROUP BY FUNCTION('YEAR', t.date), FUNCTION('MONTH', t.date)
+    ORDER BY FUNCTION('YEAR', t.date), FUNCTION('MONTH', t.date)
+""")
+List<MonthlyTrendResponse> findMonthlyExpenseTrends(
+        @Param("userId") Long userId,
+        @Param("startDate") LocalDate startDate);
 
-	@Query("""
-			    SELECT t.category.name, FUNCTION('DATE_FORMAT', t.date, '%Y-%m'),
-			           COALESCE(SUM(t.amount), 0)
-			    FROM Transaction t
-			    WHERE t.user.id = :userId
-			      AND t.type = 'EXPENSE'
-			      AND t.date >= :startDate
-			    GROUP BY t.category.name, FUNCTION('DATE_FORMAT', t.date, '%Y-%m')
-			""")
+
+@Query("""
+    SELECT t.category.name,
+           FUNCTION('YEAR', t.date),
+           FUNCTION('MONTH', t.date),
+           COALESCE(SUM(t.amount), 0)
+    FROM Transaction t
+    WHERE t.user.id = :userId
+      AND t.type = 'EXPENSE'
+      AND t.date >= :startDate
+    GROUP BY t.category.name,
+             FUNCTION('YEAR', t.date),
+             FUNCTION('MONTH', t.date)
+""")
 	List<Object[]> findCategoryMonthlyTotals(@Param("userId") Long userId, @Param("startDate") LocalDate startDate);
 
 	List<Transaction> findByUser(User user);
@@ -168,13 +183,17 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 	List<Object[]> getExpenseByCategory();
 
 	@Query(value = """
-			SELECT DATE_FORMAT(t.date, '%Y-%m') AS month, SUM(t.amount)
-			FROM transactions t
-			WHERE t.type = 'EXPENSE'
-			  AND t.user_id = :userId
-			GROUP BY month
-			ORDER BY month
-			""", nativeQuery = true)
+    SELECT EXTRACT(YEAR FROM t.date) AS year,
+           EXTRACT(MONTH FROM t.date) AS month,
+           SUM(t.amount)
+    FROM transactions t
+    WHERE t.type = 'EXPENSE'
+      AND t.user_id = :userId
+    GROUP BY year, month
+    ORDER BY year, month
+""", nativeQuery = true)
+List<Object[]> getMonthlyExpenseTrend(@Param("userId") Long userId);
+
 	List<Object[]> getMonthlyExpenseTrend(@Param("userId") Long userId);
 
 	@Query("""
