@@ -116,7 +116,7 @@ List<Object[]> getMonthlySummaryByUserIdAndType(Long userId, Type type);
 	BigDecimal totalExpenses();
 
 	@Query("""
-    SELECT new MonthlyTrendResponse(
+    SELECT new com.ExpenseTracker.mod.dto.response.MonthlyTrendResponse(
         FUNCTION('YEAR', t.date),
         FUNCTION('MONTH', t.date),
         COALESCE(SUM(t.amount), 0)
@@ -131,6 +131,7 @@ List<Object[]> getMonthlySummaryByUserIdAndType(Long userId, Type type);
 List<MonthlyTrendResponse> findMonthlyExpenseTrends(
         @Param("userId") Long userId,
         @Param("startDate") LocalDate startDate);
+
 
 
 @Query("""
