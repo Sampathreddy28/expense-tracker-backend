@@ -243,15 +243,15 @@ List<Object[]> getMonthlyExpenseTrend(@Param("userId") Long userId);
 		return sumExpenseByCategoryAndMonth(userId, categoryId, period.getYear(), period.getMonthValue());
 	}
 
-	@Query("""
-			    SELECT COALESCE(SUM(t.amount), 0)
-			    FROM Transaction t
-			    WHERE t.user.id = :userId
-			      AND t.category.id = :categoryId
-			     AND FUNCTION('YEAR', t.date) = :year
-AND FUNCTION('MONTH', t.date) = :month
-			""")
-	BigDecimal getSpentAmount(Long userId, Long categoryId, YearMonth period);
+// 	@Query("""
+// 			    SELECT COALESCE(SUM(t.amount), 0)
+// 			    FROM Transaction t
+// 			    WHERE t.user.id = :userId
+// 			      AND t.category.id = :categoryId
+// 			     AND FUNCTION('YEAR', t.date) = :year
+// AND FUNCTION('MONTH', t.date) = :month
+// 			""")
+// 	BigDecimal getSpentAmount(Long userId, Long categoryId, YearMonth period);
 
 	@Query("""
 			SELECT YEAR(t.date), MONTH(t.date), SUM(t.amount)
