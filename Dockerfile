@@ -2,11 +2,14 @@
 FROM eclipse-temurin:17-jdk AS build
 WORKDIR /app
 
+# Install Maven
 RUN apt-get update && apt-get install -y maven
 
+# Copy pom first for dependency cache
 COPY pom.xml .
 RUN mvn dependency:go-offline
 
+# Copy source
 COPY . .
 RUN mvn clean package -DskipTests
 
