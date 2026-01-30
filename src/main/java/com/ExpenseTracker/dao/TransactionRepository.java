@@ -194,7 +194,6 @@ List<MonthlyTrendResponse> findMonthlyExpenseTrends(
     ORDER BY year, month
 """, nativeQuery = true)
 List<Object[]> getMonthlyExpenseTrend(@Param("userId") Long userId);
-
 	
 
 	@Query("""
