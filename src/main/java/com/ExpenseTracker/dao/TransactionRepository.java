@@ -194,7 +194,7 @@ List<MonthlyTrendResponse> findMonthlyExpenseTrends(
 """, nativeQuery = true)
 List<Object[]> getMonthlyExpenseTrend(@Param("userId") Long userId);
 
-	List<Object[]> getMonthlyExpenseTrend(@Param("userId") Long userId);
+	
 
 	@Query("""
 			    SELECT t.category, SUM(t.amount)
