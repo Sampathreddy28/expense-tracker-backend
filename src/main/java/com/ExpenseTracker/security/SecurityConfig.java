@@ -169,7 +169,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
             "http://localhost:5173",
-            "http://localhost:3000",
+            "https://expense-tracker-frontend.onrender.com",
             "https://your-frontend.vercel.app"
         ));
         config.setAllowedMethods(List.of(
