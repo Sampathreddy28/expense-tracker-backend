@@ -167,10 +167,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of(
-            "http://localhost:5173",
-            "https://expense-tracker-frontend.onrender.com",
-            "https://your-frontend.vercel.app"
+       config.setAllowedOrigins(List.of(
+            "https://expense-tracker-frontend-updated.onrender.com"
         ));
         config.setAllowedMethods(List.of(
             "GET", "POST", "PUT", "DELETE", "OPTIONS"
