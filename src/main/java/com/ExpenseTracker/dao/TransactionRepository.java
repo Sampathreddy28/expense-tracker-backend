@@ -248,7 +248,8 @@ List<Object[]> getMonthlyExpenseTrend(@Param("userId") Long userId);
 			    FROM Transaction t
 			    WHERE t.user.id = :userId
 			      AND t.category.id = :categoryId
-			      AND FUNCTION('YEAR_MONTH', t.date) = :period
+			     AND FUNCTION('YEAR', t.date) = :year
+AND FUNCTION('MONTH', t.date) = :month
 			""")
 	BigDecimal getSpentAmount(Long userId, Long categoryId, YearMonth period);
 
