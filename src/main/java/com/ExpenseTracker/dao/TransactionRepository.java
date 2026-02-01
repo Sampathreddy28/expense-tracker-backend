@@ -302,10 +302,18 @@ List<Object[]> getMonthlyExpenseTrend(@Param("userId") Long userId);
 	
 	@Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.type = :type")
 	Double sumByType(@Param("type") Transaction.Type type);
-	@Query("SELECT FUNCTION('MONTH', t.date) as month, SUM(CASE WHEN t.type = 'INCOME' THEN t.amount ELSE 0 END), " +
-		       "SUM(CASE WHEN t.type = 'EXPENSE' THEN t.amount ELSE 0 END) " +
-		       "FROM Transaction t GROUP BY FUNCTION('MONTH', t.date) ORDER BY month")
-		List<Object[]> getMonthlySummary();
+
+	
+@Query("""
+SELECT EXTRACT(MONTH FROM t.date),
+       SUM(CASE WHEN t.type='INCOME' THEN t.amount ELSE 0 END),
+       SUM(CASE WHEN t.type='EXPENSE' THEN t.amount ELSE 0 END)
+FROM Transaction t
+GROUP BY EXTRACT(MONTH FROM t.date)
+ORDER BY 1
+""")
+List<Object[]> getMonthlySummary();
+
 
 
 
