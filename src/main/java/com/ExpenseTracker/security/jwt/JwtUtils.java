@@ -43,6 +43,8 @@ private long jwtExpirationMs;
     @PostConstruct
     public void init() {
         this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+            System.out.println("JWT Secret length: " + jwtSecret.length());
+
     }
 
     // Generate token (unchanged - no deprecation here)
