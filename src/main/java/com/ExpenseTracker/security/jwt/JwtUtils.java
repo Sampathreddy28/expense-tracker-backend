@@ -30,11 +30,12 @@ public class JwtUtils {
 
 //    @Value("${expensetracker.app.jwtExpirationMs}")
 //    private int jwtExpirationMs;
-  @Value("${expensetracker.app.jwt.secret}")
+@Value("${expense.app.jwtSecret}")
 private String jwtSecret;
 
-@Value("${expensetracker.app.jwt.expiration.ms}")
+@Value("${expense.app.jwtExpirationMs}")
 private long jwtExpirationMs;
+
 
 
     
