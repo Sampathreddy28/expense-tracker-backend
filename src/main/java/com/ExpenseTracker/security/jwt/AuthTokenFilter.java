@@ -36,12 +36,14 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
 
         // 🔥 Skip JWT validation for auth endpoints
-        if (path.startsWith("/api/auth")) {
+        if (path.startsWith("/api/auth/")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         String jwt = parseJwt(request);
+                 System.out.println("PATH: " + path);
+        System.out.println("JWT: " + jwt);
         if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
             String username = jwtUtils.getUsernameFromJwtToken(jwt);
 
@@ -72,7 +74,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 //            return headerAuth.substring(7); // Removes "Bearer "
 //        }
         if (headerAuth != null && headerAuth.startsWith("Bearer ")) {
-            return headerAuth.substring(7);
+            return headerAuth.substring(7).trim();
         }
         return null;
     }
